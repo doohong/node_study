@@ -34,6 +34,9 @@ HTTP 통신 요청(Request; GET, POST, DELETE 등)에 대한 핸들러를 만든
 */
 var express = require('express');
 var app = express();
+app.use(express.json());
+
+
 var router = require('./router')(app);
 
 // view 경로 설정
@@ -42,7 +45,7 @@ app.set('views', __dirname + '/');
 // 화면 engine을 ejs로 설정
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
-
+app.use('/api',require('./routes/api'))
 var server = app.listen(3000, function(){
     console.log("Express server has started on port 3000")
 });

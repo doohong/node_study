@@ -13,6 +13,7 @@ async function GetBoardList(){
     try{
         conn = await pool.getConnection();
         rows = await conn.query('SELECT * FROM tbl_board');
+        conn.release();
     }
     catch(err){
         throw err;
