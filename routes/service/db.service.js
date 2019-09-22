@@ -1,53 +1,63 @@
 const mariadb = require('mariadb');
 
  
-class Database{
-    constructor(){
+class Database {
+    constructor() {
         this.pool = mariadb.createPool({
-            host: '127.0.0.1', port:3306,
-            user: 'root', password: 'root',
-            database: 'nodeStudy'
-            ,connectionLimit: 5
+            host: '127.0.0.1', 
+            port:3306,
+            user: 'root', 
+            password: 'root',
+            database: 'nodeStudy',
+            connectionLimit: 5
         });
        
     }
-    query(sql, args) {
-        return new Promise((resolve, reject) => {
-          this.pool.getConnection((err, connection) => {
-            if (err) {
-              l.error('getConnection err', err);
-              throw err;
-            }
-    
-            connection.beginTransaction(tranErr => {
-              if (tranErr) {
-                // l.log('transaction', tranErr);
-                throw err;
-              }
-              connection.query(sql, args, (queryErr, rows) => {
-                if (queryErr) {
-                  return connection.rollback(() => {
-                    connection.release();
-                    return reject(queryErr);
-                  });
-                }
-                connection.commit(commitErr => {
-                  if (commitErr) {
-                    return connection.rollback(() => {
-                      connection.release();
-                      return reject(commitErr);
-                    });
+    query(sql, args){
+     
+        return new Promise(async (resolve, reject) => {
+            console.log('test');
+            console.log('this.pool', this.pool.getConnection);
+            //console.log(args);
+            try {
+              //console.log(args);
+              console.log(sql);
+                 pool.getConnection((err,connection)=>{
+                  if(err){
+                    console.log(err);
+                    return reject(err);
                   }
-    
-                  connection.release();
-                  resolve(rows);
+                  console.log("test2");
+                  //console.log(args);
+                 connection.query(sql,(err,rows) => {
+                    
+                    if(err) return reject(err);
+                    connection.release();
+                    return resolve(rows);
+                  });
                 });
-              });
-            });
-          });
+            } catch (err) {
+                console.log('err');
+            }
         });
       }
-    
+      async query2(sql,args){
+        let conn, rows;
+        try{
+            conn = await this.pool.getConnection();
+            // console.log("sql",sql);
+            // console.log(args);
+            rows = await conn.query(sql,args);
+            conn.release();
+        }
+        catch(err){
+            throw err;
+        }
+        finally{
+            if (conn) conn.end();
+            return rows;
+        }
+      }
       executeQuery(connection, sql, args) {
         return new Promise((resolve, reject) => {
           connection.query(sql, args, (queryErr, rows) => {
@@ -221,7 +231,7 @@ class Database{
         });
     }
 }
-export default new Database();
+module.exports = new Database();
 
     
 

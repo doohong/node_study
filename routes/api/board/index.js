@@ -1,9 +1,7 @@
 const router = require('express').Router();
 const controller = require('./board.controller.js');
+const authMiddleware = require('../../../middlewares/auth');
 
-router.post('/board', controller.postBoard);
-router.get('/board', controller.getBoard);
-router.put('/board', controller.putBoard);
-router.delete('/board', controller.deleteBoard);
-
+router.use('/write',authMiddleware);
+router.get('/write',controller.write);
 module.exports = router;
