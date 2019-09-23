@@ -10,7 +10,7 @@ class AuthController {
             const member = await authService.findbyIdAndPwd([id, pwd]);
             console.log("member",member);
             let token
-            if (member.m_id != null) {
+            if (member.m_id != undefined) {
                 token = await jwt.sign(
                     {
                         id: member.id,
